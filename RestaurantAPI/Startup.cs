@@ -38,7 +38,9 @@ namespace RestaurantAPI
         public void ConfigureServices(IServiceCollection services)
         {
             var authenticationSettings = new AuthenticationSettings();
+
             Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
             services.AddSingleton(authenticationSettings);
 
             services.AddAuthentication(option =>
@@ -56,9 +58,9 @@ namespace RestaurantAPI
                     ValidAudience = authenticationSettings.JwtIssuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
                 };
-            });
+            }); //token
             services.AddControllers().AddFluentValidation();
-            //services.AddTransient<IWeatherForecastService,WeatherForecastService>();
+            
             services.AddAuthorization(option =>
             {
                 option.AddPolicy("HasNationality",builder => 
@@ -74,20 +76,27 @@ namespace RestaurantAPI
 
             }); // dodawanie w³aœnej polityki o nazwie HasNationality.
 
-            services.AddScoped<IAuthorizationHandler, MinimumAgeRequirmentHandler>(); // rejestracja handlera dla age>20 w kontolerze dostep za pomoca authorize role= Atleast20
+            services.AddScoped<IAuthorizationHandler, MinimumAgeRequirmentHandler>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequiremtHandler>(); 
             services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirmentHandler>(); 
 
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
+
             services.AddAutoMapper(this.GetType().Assembly);
+
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();
             services.AddScoped<IAccountService, AccountService>();
+
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
+
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
             services.AddScoped<IValidator<RegisterUserDTO>, RegisterUserDtoValidator>();
+            services.AddScoped<IValidator<RestaurantQuery>, RestaurantQueryValidator>();
+
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddHttpContextAccessor();
 
@@ -105,10 +114,11 @@ namespace RestaurantAPI
             }
             app.UseMiddleware<ErrorHandlingMiddleware>(); // middleware do self exceptionów
             app.UseMiddleware<RequestTimeMiddleware>();// koniecznie przed w httpred otherwise expection wyskoczy przez zapytaniem!
+
             app.UseAuthentication(); // tez przed
             app.UseHttpsRedirection(); //wa¿ne
 
-            app.UseSwagger(); //dla 
+            app.UseSwagger(); //endpointy w swaggerze
             app.UseSwaggerUI(c=>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json","RestaurantAPI");

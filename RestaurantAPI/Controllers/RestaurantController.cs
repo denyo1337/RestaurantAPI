@@ -27,10 +27,10 @@ namespace RestaurantAPI.Controllers
         }
         [HttpGet]
        // [Authorize(Policy = "Atleast20")] just for testing 
-      [Authorize(Policy = "CreatedAtleast2Restaurants")]
-      public ActionResult<RestaurantDTO> GetAll()
+      //[Authorize(Policy = "CreatedAtleast2Restaurants")] works fine 
+      public ActionResult<RestaurantDTO> GetAll([FromQuery] RestaurantQuery query)
         {
-            var result =  restaurantService.GetAll();
+            var result =  restaurantService.GetAll(query);
             return Ok(result);
         } 
 

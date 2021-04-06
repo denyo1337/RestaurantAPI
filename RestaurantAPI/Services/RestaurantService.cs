@@ -46,15 +46,28 @@ namespace RestaurantAPI.Services
             var result = _mapper.Map<RestaurantDTO>(restaurant);
             return result;
         }
-        public IEnumerable<RestaurantDTO> GetAll()
+        public PageResult<RestaurantDTO> GetAll(RestaurantQuery query)
         {
-            var restaurants = _dbContext.Restaurants
+
+            var baseQuery = _dbContext.Restaurants
                .Include(x => x.Address)
                .Include(x => x.Dishes)
+               .Where(r => query.searchPhare == null || (r.Name.ToLower().Contains(query.searchPhare.ToLower()) || r.Description.ToLower().Contains(query.searchPhare.ToLower())));
+
+            var restaurants = baseQuery
+               .Skip(query.pageSize*(query.pageNumber -1))
+               .Take(query.pageSize)
                .ToList();
 
             var restaurantDtos = _mapper.Map<List<RestaurantDTO>>(restaurants);
-            return restaurantDtos;
+
+            var totalItemCount = baseQuery.Count();
+
+            var result = new PageResult<RestaurantDTO>(restaurantDtos,totalItemCount,query.pageSize,query.pageNumber);
+
+            //zrób refaktor by niepotrzebna była validacja, lepiej wymusisz wartości domyślne !
+
+            return result;
         }
         public int Create(CreateRestaurantDTO dto)
         {
@@ -99,6 +112,8 @@ namespace RestaurantAPI.Services
                 throw new NotFoundExpection("Restaurant not found");
 
             var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User,restaurant,new ResourceOperationRequiremt(ResourceOperation.Upadte)).Result;
+
+
             if(!authorizationResult.Succeeded)
             {
                 throw new ForbidException();

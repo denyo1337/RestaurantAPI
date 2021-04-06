@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantAPI.Middleware
 {
+    // pure testing 4 fun 
     public class RequestTimeMiddleware : IMiddleware
     {
         private readonly ILogger<RequestTimeMiddleware> _logger;
