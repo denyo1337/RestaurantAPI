@@ -9,6 +9,7 @@ using RestaurantAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -53,6 +54,23 @@ namespace RestaurantAPI.Services
                .Include(x => x.Address)
                .Include(x => x.Dishes)
                .Where(r => query.searchPhare == null || (r.Name.ToLower().Contains(query.searchPhare.ToLower()) || r.Description.ToLower().Contains(query.searchPhare.ToLower())));
+
+
+            if(!string.IsNullOrEmpty(query.SortBy))
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
+                    {
+                    {nameof(Restaurant.Name), r=>r.Name },
+                    {nameof(Restaurant.Category), r=>r.Category},
+                    {nameof(Restaurant.Description), r=>r.Description}
+                    };
+
+                var selectedColumn = columnsSelector[query.SortBy];
+                baseQuery = query.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(selectedColumn)
+                    : baseQuery.OrderByDescending(selectedColumn);
+            }
+
 
             var restaurants = baseQuery
                .Skip(query.pageSize*(query.pageNumber -1))
