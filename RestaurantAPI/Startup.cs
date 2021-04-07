@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using RestaurantAPI.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestaurantAPI
 {
@@ -38,6 +39,7 @@ namespace RestaurantAPI
         public void ConfigureServices(IServiceCollection services)
         {
             var authenticationSettings = new AuthenticationSettings();
+            
 
             Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
@@ -80,7 +82,7 @@ namespace RestaurantAPI
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequiremtHandler>(); 
             services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirmentHandler>(); 
 
-            services.AddDbContext<RestaurantDbContext>();
+            services.AddDbContext<RestaurantDbContext>(option=> option.UseSqlServer(Configuration.GetConnectionString("RestaurantDbConnection")));
             services.AddScoped<RestaurantSeeder>();
 
             services.AddAutoMapper(this.GetType().Assembly);
@@ -101,13 +103,25 @@ namespace RestaurantAPI
             services.AddHttpContextAccessor();
 
             services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("FrontEndClient", builder =>
+                {
+                    builder.AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin();// WithOrigin(Configuration["AllowedOrigins"]) dla konkretnej domeny przez appsettings.json
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,RestaurantSeeder seeder)
         {
-            seeder.Seed(); // seeduje za kazdym razem z jakiegos powodu 
             
+            app.UseResponseCaching();
+            app.UseStaticFiles();
+            seeder.Seed(); // seeduje za kazdym razem z jakiegos powodu 
+            app.UseCors("FrontEndClient");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
