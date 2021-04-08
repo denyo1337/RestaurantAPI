@@ -23,6 +23,7 @@ using System.Text;
 using RestaurantAPI.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Data;
 
 namespace RestaurantAPI
 {

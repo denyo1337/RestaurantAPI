@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RestaurantAPI.Authorization;
+using RestaurantAPI.Data;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Expections;
 using RestaurantAPI.Models;

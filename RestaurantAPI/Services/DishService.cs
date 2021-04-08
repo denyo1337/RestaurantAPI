@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Data;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Models;
 using System;

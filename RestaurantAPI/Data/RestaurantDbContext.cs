@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestaurantAPI.Entities
+namespace RestaurantAPI.Data
 {
     public class RestaurantDbContext:DbContext
     {

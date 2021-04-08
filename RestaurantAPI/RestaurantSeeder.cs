@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Data;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Models;
 
