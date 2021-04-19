@@ -38,7 +38,7 @@ namespace RestaurantAPI.Controllers
       public ActionResult<RestaurantDTO> Get([FromRoute]int id)
         {
             var result =  restaurantService.GetById(id).Result; // bez await i taska - po prostu Result
-            
+                
 
             return Ok(result);
             
@@ -49,7 +49,7 @@ namespace RestaurantAPI.Controllers
         {
           
 
-           var id =  restaurantService.Create(dto);
+           var id =  restaurantService.CreateAsync(dto).Result;
             
             return Created($"/api/restaurant/{id}",null);
         }
@@ -63,10 +63,11 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
         [HttpPut("{id}")]
-        public ActionResult Update([FromRoute] int id,[FromBody]UpdateRestaurantDTO dto)
+        [Authorize(Roles ="Admin")]
+        public async Task<ActionResult> UpdateAsync([FromRoute] int id,[FromBody]UpdateRestaurantDTO dto)
         {
            
-           restaurantService.Update(id, dto);
+          await restaurantService.UpdateAsync(id, dto);
            
 
             return NoContent();

@@ -89,14 +89,13 @@ namespace RestaurantAPI.Services
 
             return result;
         }
-        public int Create(CreateRestaurantDTO dto)
+        public async Task<int> CreateAsync(CreateRestaurantDTO dto)
         {
             var restaurant = _mapper.Map<Restaurant>(dto);
 
             restaurant.CreatedById = _userContextService.GetUserId;
 
-            _dbContext.Restaurants.Add(restaurant);
-            _dbContext.SaveChanges();
+            await _efCoreRestaurantRepository.Add(restaurant);
 
             return restaurant.Id;
         }
@@ -115,7 +114,7 @@ namespace RestaurantAPI.Services
 
             if (!authorizationResult.Succeeded)
             {
-                throw new ForbidException();
+                throw new ForbidException("Nie masz dostępu");
             }
 
             _dbContext.Restaurants.Remove(restaurant);
@@ -124,27 +123,24 @@ namespace RestaurantAPI.Services
 
         }
 
-        public void Update(int id, UpdateRestaurantDTO dto)
+        public async Task UpdateAsync(int id, UpdateRestaurantDTO dto)
         {
-            
-            var restaurant = _dbContext.Restaurants.FirstOrDefault(x => x.Id == id);
+
+            var restaurant = _efCoreRestaurantRepository.Get(id).Result;
             if (restaurant == null)
                 throw new NotFoundExpection("Restaurant not found");
 
-            var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User,restaurant,new ResourceOperationRequiremt(ResourceOperation.Upadte)).Result;
+            var userAu = _userContextService.User.IsInRole("Admin");
 
-
-            if(!authorizationResult.Succeeded)
-            {
-                throw new ForbidException();
-            }
+            if (!userAu)
+                throw new ForbidException("Nie masz dostępu");
 
             restaurant.Name = dto.Name;
             restaurant.Description = dto.Description;
             restaurant.HasDelivery = dto.HasDelivery;
 
-            
-            _dbContext.SaveChanges();
+
+            await _efCoreRestaurantRepository.Update(restaurant);
 
             
            

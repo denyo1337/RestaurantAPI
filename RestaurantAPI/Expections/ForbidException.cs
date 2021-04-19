@@ -7,6 +7,9 @@ namespace RestaurantAPI.Expections
 {
     public class ForbidException:Exception
     {
+        public ForbidException(string msg):base(msg)
+        {
 
+        }
     }
 }

@@ -9,9 +9,9 @@ namespace RestaurantAPI.Services
     {
         Task<RestaurantDTO> GetById(int id);
         PageResult<RestaurantDTO> GetAll(RestaurantQuery query);
-        int Create(CreateRestaurantDTO dto);
+        Task<int> CreateAsync(CreateRestaurantDTO dto);
         void Delete(int id);
-        void Update(int id, UpdateRestaurantDTO dto);
+        Task UpdateAsync(int id, UpdateRestaurantDTO dto);
 
 
     }
