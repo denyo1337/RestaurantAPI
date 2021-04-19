@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RestaurantAPI.Authorization;
 using RestaurantAPI.Data;
+using RestaurantAPI.Data.EfCore;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Expections;
 using RestaurantAPI.Models;
@@ -24,28 +25,28 @@ namespace RestaurantAPI.Services
         private readonly ILogger<RestaurantService> _logger;
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserContextService _userContextService;
+        private readonly EfCoreRestaurantRepository _efCoreRestaurantRepository;
 
-        public RestaurantService(RestaurantDbContext context, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService,IUserContextService userContextService)
+        public RestaurantService(RestaurantDbContext context, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService,IUserContextService userContextService,EfCoreRestaurantRepository efCoreRestaurantRepository)
         {
             _dbContext = context;
             _mapper = mapper;
             _logger = logger;
             _authorizationService = authorizationService;
             _userContextService = userContextService;
+            _efCoreRestaurantRepository = efCoreRestaurantRepository;
         }
 
-        public RestaurantDTO GetById(int id)
+        public async Task<RestaurantDTO> GetById(int id)
         {
             
-            var restaurant = _dbContext
-                .Restaurants
-                .Include(x => x.Address)
-                .Include(x => x.Dishes)
-                .FirstOrDefault(x => x.Id == id);
+            var restaurant = await _efCoreRestaurantRepository.Get(id);
+           
             if (restaurant == null)
                 throw new NotFoundExpection("Restaurant not found");
 
             var result = _mapper.Map<RestaurantDTO>(restaurant);
+
             return result;
         }
         public PageResult<RestaurantDTO> GetAll(RestaurantQuery query)

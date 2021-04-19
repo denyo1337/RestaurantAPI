@@ -35,9 +35,9 @@ namespace RestaurantAPI.Controllers
         } 
 
        [HttpGet("{id}")]
-      public ActionResult<RestaurantDTO> Get([FromRoute]int id)
+      public async Task<ActionResult<RestaurantDTO>> Get([FromRoute]int id)
         {
-            var result = restaurantService.GetById(id);
+            var result = await restaurantService.GetById(id);
             
 
             return Ok(result);

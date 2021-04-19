@@ -24,6 +24,7 @@ using RestaurantAPI.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Data;
+using RestaurantAPI.Data.EfCore;
 
 namespace RestaurantAPI
 {
@@ -87,7 +88,9 @@ namespace RestaurantAPI
             services.AddScoped<RestaurantSeeder>();
 
             services.AddAutoMapper(this.GetType().Assembly);
-
+            //EfcoreRepo register
+            services.AddScoped<EfCoreRestaurantRepository>();
+            //rejestracja services z inteface
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();
             services.AddScoped<IAccountService, AccountService>();

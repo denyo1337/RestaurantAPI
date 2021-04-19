@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace RestaurantAPI.Data.EfCore
 {
-    public abstract class EfCoreRepository<TEntity, TContext> : IRepository<TEntity>
+    public abstract class EfCoreRepository<TEntity, Context> : IRepository<TEntity>
        where TEntity : class, IEntity
-       where TContext : DbContext
+       where Context : DbContext
     {
-        protected readonly TContext context;
-        public EfCoreRepository(TContext context)
+        protected readonly Context context;
+        public EfCoreRepository(Context context)
         {
             this.context = context;
         }
