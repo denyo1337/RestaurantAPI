@@ -35,9 +35,9 @@ namespace RestaurantAPI.Controllers
         } 
 
        [HttpGet("{id}")]
-      public async Task<ActionResult<RestaurantDTO>> Get([FromRoute]int id)
+      public ActionResult<RestaurantDTO> Get([FromRoute]int id)
         {
-            var result = await restaurantService.GetById(id);
+            var result =  restaurantService.GetById(id).Result; // bez await i taska - po prostu Result
             
 
             return Ok(result);
