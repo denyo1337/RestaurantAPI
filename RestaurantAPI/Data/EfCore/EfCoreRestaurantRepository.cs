@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Entities;
+using RestaurantAPI.Migrations.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,20 @@ namespace RestaurantAPI.Data.EfCore
         public EfCoreRestaurantRepository(RestaurantDbContext context): base(context)
         {
 
+        }
+
+        public override async Task<Restaurant> Delete(int id)
+        {
+
+            var restaurant = await context.Set<Restaurant>().FindAsync(id);
+
+            if (restaurant == null)
+                return restaurant;
+
+            context.Set<Restaurant>().Remove(restaurant);
+            await context.SaveChangesAsync();
+
+            return restaurant;
         }
 
         public override async Task<Restaurant> Get(int id)

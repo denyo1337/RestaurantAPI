@@ -42,9 +42,6 @@ namespace RestaurantAPI.Services
             
             var restaurant = await _efCoreRestaurantRepository.Get(id);
            
-            if (restaurant == null)
-                throw new NotFoundExpection("Restaurant not found");
-
             var result = _mapper.Map<RestaurantDTO>(restaurant);
 
             return result;
@@ -99,28 +96,20 @@ namespace RestaurantAPI.Services
 
             return restaurant.Id;
         }
-        public void Delete(int id)
+        public async Task<Restaurant> Delete(int id)
         {
-            _logger.LogWarning($"Restaurant with id: {id} DELETE action invoked ! Done by {_userContextService.User}");
-            _logger.LogError($"Restaurant with id: {id} DELETE action invoked but failed! Done by {_userContextService.User}");
+            /* _logger.LogWarning($"Restaurant with id: {id} DELETE action invoked ! Done by {_userContextService.User}");
+             _logger.LogError($"Restaurant with id: {id} DELETE action invoked but failed! Done by {_userContextService.User}"); to na później
+            */
+            var user = _userContextService.User.IsInRole("Admin");
+            if (!user)
+                throw new ForbidException("Nie masz praw do usuwania danych");
 
-            var restaurant = _dbContext.Restaurants.FirstOrDefault(x => x.Id == id);
-
-            if (restaurant == null)
-                throw new NotFoundExpection("Restaurant not found");
-
-            var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User, restaurant, new ResourceOperationRequiremt(ResourceOperation.Delete)).Result;
-
-
-            if (!authorizationResult.Succeeded)
-            {
-                throw new ForbidException("Nie masz dostępu");
-            }
-
-            _dbContext.Restaurants.Remove(restaurant);
-            _dbContext.SaveChanges();
+            var restaurant = await _efCoreRestaurantRepository.Delete(id);
             
-
+            return restaurant;
+            
+            
         }
 
         public async Task UpdateAsync(int id, UpdateRestaurantDTO dto)
@@ -141,10 +130,6 @@ namespace RestaurantAPI.Services
 
 
             await _efCoreRestaurantRepository.Update(restaurant);
-
-            
-           
-
 
             
         }

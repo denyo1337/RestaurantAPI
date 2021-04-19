@@ -38,7 +38,8 @@ namespace RestaurantAPI.Controllers
       public ActionResult<RestaurantDTO> Get([FromRoute]int id)
         {
             var result =  restaurantService.GetById(id).Result; // bez await i taska - po prostu Result
-                
+            if (result == null)
+                throw new NotFoundExpection("Restauracja nie istnieje");
 
             return Ok(result);
             
@@ -54,11 +55,12 @@ namespace RestaurantAPI.Controllers
             return Created($"/api/restaurant/{id}",null);
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Manager")]
-        public ActionResult Delete([FromRoute] int id)
+        [Authorize]
+        public async Task<ActionResult> DeleteAsync([FromRoute] int id)
         {
-            restaurantService.Delete(id);
-           
+            var result = await restaurantService.Delete(id);
+            if (result == null)
+                throw new NotFoundExpection("Restauracja, którą chcesz usunać nie istnieje");
 
             return NoContent();
         }
