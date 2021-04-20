@@ -1,5 +1,6 @@
 ﻿using RestaurantAPI.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RestaurantAPI.Services
 {
@@ -7,7 +8,7 @@ namespace RestaurantAPI.Services
     {
         int CreateDish(int restaurantId, CreateDishDTO dto);
         DishDTO GetById(int restaurantId, int dishId);
-        List<DishDTO> GetAll(int restaurantId);
+        Task<List<DishDTO>> GetAll(int restaurantId);
         void RemoveAll(int restaurantId);
         void RemoveById(int restaurantId, int dishId);
     }

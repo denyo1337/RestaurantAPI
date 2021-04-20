@@ -55,9 +55,9 @@ namespace RestaurantAPI.Services
             return dishDTO;
         }
         
-        public List<DishDTO> GetAll(int restaurantId)
+        public async Task<List<DishDTO>> GetAll(int restaurantId)
         {
-            var dishes = _dishRepository.GetAll().Result;
+            var dishes = await _dishRepository.GetAll();
 
           
             var dishDtos = _mapper.Map<List<DishDTO>>(dishes);
