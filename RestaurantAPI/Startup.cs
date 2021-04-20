@@ -90,6 +90,7 @@ namespace RestaurantAPI
             services.AddAutoMapper(this.GetType().Assembly);
             //EfcoreRepo register
             services.AddScoped<EfCoreRestaurantRepository>();
+            services.AddScoped<EfCoreDishRepository>();
             //rejestracja services z inteface
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();

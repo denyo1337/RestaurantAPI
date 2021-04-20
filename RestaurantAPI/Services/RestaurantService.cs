@@ -49,9 +49,7 @@ namespace RestaurantAPI.Services
         public PageResult<RestaurantDTO> GetAll(RestaurantQuery query)
         {
 
-            var baseQuery = _dbContext.Restaurants
-               .Include(x => x.Address)
-               .Include(x => x.Dishes)
+            var baseQuery = _efCoreRestaurantRepository.GetAll().Result
                .Where(r => query.searchPhare == null || (r.Name.ToLower().Contains(query.searchPhare.ToLower()) || r.Description.ToLower().Contains(query.searchPhare.ToLower())));
 
 
@@ -65,9 +63,8 @@ namespace RestaurantAPI.Services
                     };
 
                 var selectedColumn = columnsSelector[query.SortBy];
-                baseQuery = query.SortDirection == SortDirection.ASC
-                    ? baseQuery.OrderBy(selectedColumn)
-                    : baseQuery.OrderByDescending(selectedColumn);
+
+               
             }
 
 

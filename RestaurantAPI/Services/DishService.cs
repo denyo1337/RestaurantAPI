@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Data;
+using RestaurantAPI.Data.EfCore;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Models;
 using System;
@@ -14,11 +15,15 @@ namespace RestaurantAPI.Services
     {
         private readonly RestaurantDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly EfCoreDishRepository _dishRepository;
+        private readonly EfCoreRestaurantRepository _restaurantRepository;
 
-        public DishService(RestaurantDbContext dbContext, IMapper mapper)
+        public DishService(RestaurantDbContext dbContext, IMapper mapper,EfCoreDishRepository dishRepository,EfCoreRestaurantRepository restaurantRepository)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _dishRepository = dishRepository;
+            _restaurantRepository = restaurantRepository;
         }
         public int Create(int restaurantId, CreateDishDTO dto)
         {
@@ -36,16 +41,13 @@ namespace RestaurantAPI.Services
         }
         public DishDTO GetById(int restaurantId, int dishId)
         {
-            var restaurant = GetRestaurantById(restaurantId);
+           
+            var dish = _dishRepository.Get(dishId).Result ;
 
+            if(dish==null || dish.Restaurant.Id !=restaurantId)
+                throw new NotFoundExpection("Dish not found or restaurantId is not valid");  
             
-
-            var dish = _dbContext.Dishes.FirstOrDefault(d => d.Id == dishId);
-            if(dish==null || dish.RestaurantId !=restaurantId)
-            {
-                throw new NotFoundExpection("Dish not found");
-            }
-
+            
             var dishDTO = _mapper.Map<DishDTO>(dish);
 
             return dishDTO;
