@@ -25,18 +25,20 @@ namespace RestaurantAPI.Services
             _dishRepository = dishRepository;
             _restaurantRepository = restaurantRepository;
         }
-        public int Create(int restaurantId, CreateDishDTO dto)
+        public int CreateDish(int restaurantId, CreateDishDTO dto)
         {
-            var restaurant = GetRestaurantById(restaurantId);
+            var restaurant = _restaurantRepository.Get(restaurantId).Result;
+            if (restaurant == null)
+                throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
 
-            var dishEntity = _mapper.Map<Dish>(dto);
+
+                var dishEntity = _mapper.Map<Dish>(dto);
 
             dishEntity.RestaurantId = restaurantId;
 
-            _dbContext.Dishes.Add(dishEntity);
-            _dbContext.SaveChanges();
+             var dishid =_dishRepository.Add(dishEntity);
 
-            return dishEntity.Id;
+            return dishid.Id;
 
         }
         public DishDTO GetById(int restaurantId, int dishId)

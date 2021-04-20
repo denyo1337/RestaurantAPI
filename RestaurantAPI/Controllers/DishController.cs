@@ -22,7 +22,7 @@ namespace RestaurantAPI.Controllers
         [HttpPost]
        public ActionResult CreateDish([FromRoute] int restaurantId, [FromBody]CreateDishDTO dto)
         {
-            var newDishId = _service.Create(restaurantId, dto);
+            var newDishId = _service.CreateDish(restaurantId, dto);
 
             return Created($"api/restaurant/{restaurantId}/dish/{newDishId}",null);
        

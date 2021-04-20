@@ -5,7 +5,7 @@ namespace RestaurantAPI.Services
 {
     public interface IDishService
     {
-        int Create(int restaurantId, CreateDishDTO dto);
+        int CreateDish(int restaurantId, CreateDishDTO dto);
         DishDTO GetById(int restaurantId, int dishId);
         List<DishDTO> GetAll(int restaurantId);
         void RemoveAll(int restaurantId);
