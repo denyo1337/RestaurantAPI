@@ -19,9 +19,35 @@ namespace RestaurantAPI.Data.EfCore
             return base.Add(entity);
         }
 
-        public override Task<Dish> Delete(int id)
+        public override async Task<Dish> Delete(int id)
         {
-            return base.Delete(id);
+            var entity = await context.Dishes.Include(x=>x.Restaurant).FirstOrDefaultAsync(x=>x.RestaurantId ==id);
+
+            if (entity == null)
+            {
+                return entity;
+            }
+
+            context.Dishes.RemoveRange(entity);
+
+            await context.SaveChangesAsync();
+
+            return entity;
+        }
+
+        public override async Task<List<Dish>> DeleteAll(int id)
+        {
+
+            var dishesOfRestaurant = await context.Dishes.ToListAsync();
+
+            var dishes = dishesOfRestaurant.FindAll(x => x.RestaurantId == id);
+
+            context.Dishes.RemoveRange(dishes);
+
+            await context.SaveChangesAsync();
+
+            return dishes;
+
         }
 
         public override async Task<Dish> Get(int id)

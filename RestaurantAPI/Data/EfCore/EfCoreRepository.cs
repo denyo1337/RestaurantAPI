@@ -37,6 +37,21 @@ namespace RestaurantAPI.Data.EfCore
 
             return entity;
         }
+        public virtual async Task<List<TEntity>> DeleteAll(int id)
+        {
+            var entity = await context.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+            {
+                return entity as List<TEntity>;
+            }
+
+            context.Set<TEntity>().RemoveRange(entity);
+            await context.SaveChangesAsync();
+
+            return entity as List<TEntity>;
+        }
+
+        
 
         public virtual async Task<TEntity> Get(int id)
         {

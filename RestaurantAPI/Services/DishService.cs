@@ -66,23 +66,20 @@ namespace RestaurantAPI.Services
         }
         public void RemoveAll(int restaurantId)
         {
-            var restaurant = GetRestaurantById(restaurantId);
+            var restaurant = _dishRepository.DeleteAll(restaurantId).Result;
+            if (restaurant == null)
+                throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
 
-            _dbContext.RemoveRange(restaurant.Dishes);
-            _dbContext.SaveChanges();
 
         }
         public void RemoveById(int restaurantId, int dishId) //works fine
         {
-            var restaurant = GetRestaurantById(restaurantId);
-            var dish = restaurant.Dishes.FirstOrDefault(x => x.Id == dishId);
-            
-            _dbContext.Dishes.Remove(dish);
-            _dbContext.SaveChanges();
-
+            var restaurant = _dishRepository.Delete(restaurantId).Result;
+            if (restaurant == null)
+                throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
 
         }
-        private Restaurant GetRestaurantById(int restaurantId)
+        /*private Restaurant GetRestaurantById(int restaurantId)
         {
             var restaurant = _dbContext.Restaurants
                 .Include(r => r.Dishes)
@@ -93,5 +90,6 @@ namespace RestaurantAPI.Services
             
             return restaurant;
         }
+        */
     }
 }
