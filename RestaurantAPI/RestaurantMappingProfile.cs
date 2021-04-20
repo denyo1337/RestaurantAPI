@@ -17,7 +17,8 @@ namespace RestaurantAPI
                 .ForMember(m=>m.Street, c=>c.MapFrom(s=>s.Address.Street))
                 .ForMember(m=>m.PostalCode, c=>c.MapFrom(s=>s.Address.PostalCode));
 
-            CreateMap<Dish, DishDTO>().ReverseMap();
+            CreateMap<Dish, DishDTO>().ReverseMap()
+                .ForMember(x=>x.RestaurantId, s=>s.MapFrom(o=>o.RestaurantId));
 
             //mapped specifically each property
             CreateMap<CreateRestaurantDTO, Restaurant>()

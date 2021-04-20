@@ -31,9 +31,11 @@ namespace RestaurantAPI.Data.EfCore
             return result;
         }
 
-        public override Task<List<Dish>> GetAll()
+        public override async Task<List<Dish>> GetAll()
         {
-            return base.GetAll();
+            var result = await context.Dishes.Include(x => x.Restaurant).ToListAsync();
+
+            return result;
         }
 
         public override Task<Dish> Update(Dish entity)

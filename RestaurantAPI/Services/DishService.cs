@@ -49,16 +49,16 @@ namespace RestaurantAPI.Services
             
             
             var dishDTO = _mapper.Map<DishDTO>(dish);
-
+            
             return dishDTO;
         }
         
         public List<DishDTO> GetAll(int restaurantId)
         {
-            var restaurant = GetRestaurantById(restaurantId);
+            var dishes = _dishRepository.GetAll().Result;
 
-
-            var dishDtos = _mapper.Map<List<DishDTO>>(restaurant.Dishes);
+          
+            var dishDtos = _mapper.Map<List<DishDTO>>(dishes);
 
             return dishDtos;
         }
