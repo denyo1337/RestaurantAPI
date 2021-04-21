@@ -35,10 +35,14 @@ namespace RestaurantAPI.Controllers
             return Ok(dish);
         }
         [HttpGet]
-        public ActionResult<List<DishDTO>> GetDishes([FromRoute] int restaurantId)
+        public async Task< ActionResult<List<DishDTO>>> GetDishes([FromRoute] int restaurantId)
         {
-            var dishes = _service.GetAll(restaurantId).Result;
+
+            var dishes = await _service.GetAll(restaurantId);
+
+            
             return Ok(dishes);
+
         }
         [HttpDelete]
         public ActionResult DeleteAllDishes([FromRoute]int restaurantId)

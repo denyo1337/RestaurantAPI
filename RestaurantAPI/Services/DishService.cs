@@ -57,10 +57,13 @@ namespace RestaurantAPI.Services
         
         public async Task<List<DishDTO>> GetAll(int restaurantId)
         {
-            var dishes = await _dishRepository.GetAll();
-
+            var dishes = await _dishRepository.GetAllDishesFromRestaurant(restaurantId);
           
+
             var dishDtos = _mapper.Map<List<DishDTO>>(dishes);
+
+            if (dishDtos.Count <= 0)
+                throw new NotFoundExpection("Pusta lista");
 
             return dishDtos;
         }
@@ -74,7 +77,7 @@ namespace RestaurantAPI.Services
         }
         public void RemoveById(int restaurantId, int dishId) //works fine
         {
-            var restaurant = _dishRepository.Delete(restaurantId).Result;
+            var restaurant = _dishRepository.DeleteById(restaurantId, dishId).Result;
             if (restaurant == null)
                 throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
 

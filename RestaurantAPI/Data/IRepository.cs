@@ -15,5 +15,7 @@ namespace RestaurantAPI.Migrations.Data
         Task<T> Update(T entity);
         Task<T> Delete(int id);
         Task<List<T>> DeleteAll(int id);
+        Task<T> DeleteById(int id, int dishId);
+        Task<List<T>> GetAllDishesFromRestaurant(int restaurantId);
     }
 }
