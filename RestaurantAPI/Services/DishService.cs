@@ -13,14 +13,14 @@ namespace RestaurantAPI.Services
 {
     public class DishService:IDishService
     {
-        private readonly RestaurantDbContext _dbContext;
+       
         private readonly IMapper _mapper;
         private readonly EfCoreDishRepository _dishRepository;
         private readonly EfCoreRestaurantRepository _restaurantRepository;
 
-        public DishService(RestaurantDbContext dbContext, IMapper mapper,EfCoreDishRepository dishRepository,EfCoreRestaurantRepository restaurantRepository)
+        public DishService(IMapper mapper,EfCoreDishRepository dishRepository,EfCoreRestaurantRepository restaurantRepository)
         {
-            _dbContext = dbContext;
+           
             _mapper = mapper;
             _dishRepository = dishRepository;
             _restaurantRepository = restaurantRepository;

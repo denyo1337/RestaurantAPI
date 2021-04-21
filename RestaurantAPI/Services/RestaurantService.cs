@@ -20,19 +20,18 @@ namespace RestaurantAPI.Services
 {
     public class RestaurantService:IRestaurantService
     {
-        private readonly RestaurantDbContext _dbContext;
+        
         private readonly IMapper _mapper;
-        private readonly ILogger<RestaurantService> _logger;
-        private readonly IAuthorizationService _authorizationService;
+       // private readonly ILogger<RestaurantService> _logger; tymczasowo
         private readonly IUserContextService _userContextService;
         private readonly EfCoreRestaurantRepository _efCoreRestaurantRepository;
 
-        public RestaurantService(RestaurantDbContext context, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService,IUserContextService userContextService,EfCoreRestaurantRepository efCoreRestaurantRepository)
+        public RestaurantService(IMapper mapper, /*ILogger<RestaurantService> logger*/ IUserContextService userContextService,EfCoreRestaurantRepository efCoreRestaurantRepository)
         {
-            _dbContext = context;
+            
             _mapper = mapper;
-            _logger = logger;
-            _authorizationService = authorizationService;
+            //_logger = logger;
+          
             _userContextService = userContextService;
             _efCoreRestaurantRepository = efCoreRestaurantRepository;
         }
@@ -63,9 +62,14 @@ namespace RestaurantAPI.Services
                     };
 
                 var selectedColumn = columnsSelector[query.SortBy];
+                if (query.SortDirection.Equals(SortDirection.ASC))
+                {
+                    
+                }
 
-               
             }
+            
+
 
 
             var restaurants = baseQuery
