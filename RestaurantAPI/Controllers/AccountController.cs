@@ -19,16 +19,16 @@ namespace RestaurantAPI.Controllers
             _service = service;
         }
         [HttpPost("register")]
-        public ActionResult RegisterUser([FromBody] RegisterUserDTO dto)
+        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserDTO dto)
         {
-            _service.RegisterUser(dto);
+            await _service.RegisterUser(dto);
 
             return Ok();
         }
         [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginDTO dto)
+        public async Task<ActionResult> Login([FromBody] LoginDTO dto)
         {
-            string token = _service.GenerateJwt(dto);
+            string token = await _service.GenerateJwt(dto);
 
             return Ok(token);
         }

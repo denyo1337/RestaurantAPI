@@ -18,27 +18,17 @@ namespace RestaurantAPI.Controllers
         [ResponseCache(Duration =1200, VaryByQueryKeys =new[] { "fileName"})]
         public ActionResult GetFile([FromQuery] string fileName)
         {
-
             var rootPath = Directory.GetCurrentDirectory();
-
             var filePath = $"{rootPath}/PrivateFiles/{fileName}";
-
             var fileExist =  System.IO.File.Exists(filePath);
-
             if(!fileExist)
             {
                 return NotFound();
             }
-
             var fileContents = System.IO.File.ReadAllBytes(filePath);
-
             var contentProvider = new FileExtensionContentTypeProvider();
-
-
             contentProvider.TryGetContentType(filePath, out string conentType);
-
             return File(fileContents, conentType, fileName);
-
         }
 
         [HttpPost]
@@ -56,7 +46,6 @@ namespace RestaurantAPI.Controllers
                 }
                 return Ok();
             }
-
             return BadRequest();
         }
     }

@@ -12,27 +12,26 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using RestaurantAPI.Data;
+using RestaurantAPI.Data.EfCore;
 
 namespace RestaurantAPI.Services
 {
     public class AccountService:IAccountService
     {
-        private readonly RestaurantDbContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
-
-        public AccountService(RestaurantDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        private readonly EfCoreAccountRepository _efCoreAccountRepository;
+        
+        public AccountService(IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings, EfCoreAccountRepository efCoreAccountRepository)
         {
-            _context = context;
+           
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+            _efCoreAccountRepository = efCoreAccountRepository;
         }
 
-        public IPasswordHasher<User> PasswordHasher { get; }
-
-        public void RegisterUser(RegisterUserDTO dto)
+        public async Task RegisterUser(RegisterUserDTO dto)
         {
-            
             var newUser = new User()
             {
                 Email = dto.Email,
@@ -40,19 +39,14 @@ namespace RestaurantAPI.Services
                 Nationality = dto.Nationality,
                 RoleId = dto.RoleId
             };
-
             var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
             newUser.PasswordHash = hashedPassword;
 
-            _context.Users.Add(newUser);
-            _context.SaveChanges();
-
+            await _efCoreAccountRepository.RegisterUser(newUser);
         }
-        public string GenerateJwt(LoginDTO dto)
+        public async Task<string> GenerateJwt(LoginDTO dto)
         {
-            var user = _context.Users
-                .Include(u =>u.Role)
-                .FirstOrDefault(x=>x.Email==dto.Email);
+            var user = await _efCoreAccountRepository.GetUserByEmail(dto);
 
             if (user == null)
                 throw new BadRequestException("Invalid user name or password");

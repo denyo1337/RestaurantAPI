@@ -39,7 +39,6 @@ namespace RestaurantAPI.Data.EfCore
 
         public override async Task<List<Restaurant>> GetAll()
         {
-            
             return await context.Restaurants
                .Include(x => x.Address)
                .Include(x => x.Dishes)

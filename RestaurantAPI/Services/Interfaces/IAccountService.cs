@@ -1,10 +1,11 @@
 ﻿using RestaurantAPI.Models;
+using System.Threading.Tasks;
 
 namespace RestaurantAPI.Services
 {
     public interface IAccountService
     {
-        void RegisterUser(RegisterUserDTO dto);
-        string GenerateJwt(LoginDTO dto);
+        Task RegisterUser(RegisterUserDTO dto);
+        Task<string> GenerateJwt(LoginDTO dto);
     }
 }

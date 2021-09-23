@@ -25,31 +25,24 @@ namespace RestaurantAPI.Services
             _dishRepository = dishRepository;
             _restaurantRepository = restaurantRepository;
         }
-        public int CreateDish(int restaurantId, CreateDishDTO dto)
+        public async Task<int> CreateDish(int restaurantId, CreateDishDTO dto)
         {
-            var restaurant = _restaurantRepository.Get(restaurantId).Result;
+            var restaurant = await _restaurantRepository.Get(restaurantId);
             if (restaurant == null)
                 throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
 
-
-                var dishEntity = _mapper.Map<Dish>(dto);
-
+            var dishEntity = _mapper.Map<Dish>(dto);
             dishEntity.RestaurantId = restaurantId;
-
-             var dishid =_dishRepository.Add(dishEntity);
+            var dishid =_dishRepository.Add(dishEntity);
 
             return dishid.Id;
-
         }
-        public DishDTO GetById(int restaurantId, int dishId)
+        public async Task<DishDTO> GetById(int restaurantId, int dishId)
         {
-           
-            var dish = _dishRepository.Get(dishId).Result ;
+            var dish = await _dishRepository.Get(dishId) ;
 
             if(dish==null || dish.Restaurant.Id !=restaurantId)
                 throw new NotFoundExpection("Dish not found or restaurantId is not valid");  
-            
-            
             var dishDTO = _mapper.Map<DishDTO>(dish);
             
             return dishDTO;
@@ -59,7 +52,6 @@ namespace RestaurantAPI.Services
         {
             var dishes = await _dishRepository.GetAllDishesFromRestaurant(restaurantId);
           
-
             var dishDtos = _mapper.Map<List<DishDTO>>(dishes);
 
             if (dishDtos.Count <= 0)
@@ -67,32 +59,18 @@ namespace RestaurantAPI.Services
 
             return dishDtos;
         }
-        public void RemoveAll(int restaurantId)
+        public async Task RemoveAll(int restaurantId)
         {
-            var restaurant = _dishRepository.DeleteAll(restaurantId).Result;
+            var restaurant = await _dishRepository.DeleteAll(restaurantId);
+            if (restaurant == null)
+                throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje lub nie posiada dań");
+
+        }
+        public async Task RemoveById(int restaurantId, int dishId) //works fine
+        {
+            var restaurant = await _dishRepository.DeleteById(restaurantId, dishId);
             if (restaurant == null)
                 throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
-
-
         }
-        public void RemoveById(int restaurantId, int dishId) //works fine
-        {
-            var restaurant = _dishRepository.DeleteById(restaurantId, dishId).Result;
-            if (restaurant == null)
-                throw new NotFoundExpection($"Restauracja o id:{restaurantId} nie istnieje ");
-
-        }
-        /*private Restaurant GetRestaurantById(int restaurantId)
-        {
-            var restaurant = _dbContext.Restaurants
-                .Include(r => r.Dishes)
-                .FirstOrDefault(x => x.Id == restaurantId);
-
-            if (restaurant == null) 
-                throw new NotFoundExpection("Restaurant not found");
-            
-            return restaurant;
-        }
-        */
     }
 }

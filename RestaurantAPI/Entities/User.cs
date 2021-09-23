@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestaurantAPI.Migrations.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantAPI.Entities
 {
-    public class User
+    public class User : IEntity
     {
         public int Id { get; set; }
         [Required]
