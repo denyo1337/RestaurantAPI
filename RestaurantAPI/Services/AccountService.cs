@@ -49,7 +49,7 @@ namespace RestaurantAPI.Services
             var user = await _efCoreAccountRepository.GetUserByEmail(dto);
 
             if (user == null)
-                throw new BadRequestException("Invalid user name or password");
+                throw new NotFoundExpection("Invalid user name or password");
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
 
@@ -62,8 +62,6 @@ namespace RestaurantAPI.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.Email}"),
                 new Claim(ClaimTypes.Role,$"{user.Role.Name}"),
-                new Claim("DateOfBirth", user.DateOfBirth.Value.ToShortDateString())
-
             };
 
             if(!string.IsNullOrEmpty(user.Nationality))

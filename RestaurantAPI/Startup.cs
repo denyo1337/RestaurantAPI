@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Data;
 using RestaurantAPI.Data.EfCore;
+using Microsoft.OpenApi.Models;
 
 namespace RestaurantAPI
 {
@@ -89,8 +90,9 @@ namespace RestaurantAPI
 
             services.AddAutoMapper(this.GetType().Assembly);
             //EfcoreRepo register
-            services.AddScoped<EfCoreRestaurantRepository>();
             services.AddScoped<EfCoreDishRepository>();
+            services.AddScoped<EfCoreRestaurantRepository>();
+            services.AddScoped<EfCoreAccountRepository>();
             //rejestracja services z inteface
             services.AddScoped<IRestaurantService, RestaurantService>();
             services.AddScoped<IDishService, DishService>();
@@ -107,7 +109,33 @@ namespace RestaurantAPI
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddHttpContextAccessor();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c=>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme."
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+
+                    }
+                });
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy("FrontEndClient", builder =>

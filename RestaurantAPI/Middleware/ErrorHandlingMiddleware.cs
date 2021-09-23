@@ -40,6 +40,11 @@ namespace RestaurantAPI
                 context.Response.StatusCode = 404;
                  await context.Response.WriteAsync(notfound.Message);
             }
+            catch(BadRequestException badrequest)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(badrequest.Message);
+            }
             catch(Exception e)
             {
                 logger.LogError(e,e.Message);
